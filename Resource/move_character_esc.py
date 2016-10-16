@@ -1,6 +1,17 @@
 from pico2d import *
 
+class MainCar:
+    image = None
+
+    #GO_LEFT, GO_STRAIGHT, GO_RIGHT = 0, 1, 2, 3
+
+    def handle_left_go(self):
+        pass
+    def handle_right_go(self):
+        pass
+
 def handle_events():
+    global image
     global running
     global iX
     global iXcount
