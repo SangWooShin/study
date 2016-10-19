@@ -1,49 +1,75 @@
 from pico2d import *
 
+running = None
+
+class Road:
+    image = None
+
+    def __init__(self):
+        self.x, self.y = 400, 400
+        self.run_frames = 0
+        if Road.image == None:
+            Road.image == load_image('Road.png')
+
+
+    def draw(self):
+        pass
+        self.image.clip_draw(0, 0, 150, 150, self.x, self.y)
+
 class MainCar:
     image = None
 
-    #GO_LEFT, GO_STRAIGHT, GO_RIGHT = 0, 1, 2, 3
+    def __init__(self):
+        self.x, self.y = 450, 80
+        self.run_frames = 0
+        if MainCar.image == None:
+            MainCar.image = load_image('MainCar.png')
 
-    def handle_left_go(self):
-        pass
-    def handle_right_go(self):
-        pass
+
+    def draw(self):
+        self.image.clip_draw(0, 0, 150, 150, self.x + iX, self.y)
+
+class AiCar:
+    pass
 
 def handle_events():
-    global image
     global running
     global iX
-    global iXcount
     events = get_events()
     for event in events:
-
         if event.type == SDL_QUIT:
             running = False
         elif event.type == SDL_KEYDOWN:
             if event.key == SDLK_ESCAPE:
                 running = False
-            elif event.key == SDLK_LEFT:
-                ++iXcount
+            elif event.key == SDLK_LEFT and iX > -201:
+                iX -= 100
+            elif event.key == SDLK_RIGHT and iX < 200:
+                iX += 100
     pass
 
-open_canvas()
-MainCharacter = load_image('MainCar.png')
-AiCharacter = load_image('PoliceCar.png')
-running = True
-iXcount = 0
-y = 0
-frame = 0
-iX = 400 - iXcount*100
-while (y < 600 and running):
-    clear_canvas()
-    MainCharacter.clip_draw(0, 0, 100, 100, iX, y)
-    AiCharacter.clip_draw(frame*100, 0, 100, 100, 300, y)
-    update_canvas()
-    frame = (frame + 1) % 2
-    y += 5
-    delay(0.1)
-    handle_events()
+def main():
 
-close_canvas()
+    open_canvas()
 
+    road = Road()
+    maincar = MainCar()
+
+    global running
+    running = True
+    global iX
+    global iY
+    iX = 0
+    iY = 0
+    while running:
+        handle_events()
+        road.draw()
+        maincar.draw()
+        update_canvas()
+        iY -= 5
+        delay(0.01)
+
+    close_canvas()
+
+if __name__ == '__main__':
+    main()
