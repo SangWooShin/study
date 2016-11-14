@@ -18,6 +18,8 @@ name = "MainState"
 
 leftmove = 0
 rightmove = 0
+upmove = 0
+downmove = 0
 
 def enter():
     global maincar, policecar, road1, road2, font, box, item
@@ -54,7 +56,7 @@ def resume():
 
 
 def handle_events(frame_time):
-    global leftmove, rightmove
+    global leftmove, rightmove, upmove, downmove
     events = get_events()
     for event in events:
         if event.type == SDL_QUIT:
@@ -70,6 +72,14 @@ def handle_events(frame_time):
                 rightmove = 1
             elif (event.type, event.key) == (SDL_KEYUP, SDLK_RIGHT):
                 rightmove = 0
+            elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_UP):
+                upmove = 1
+            elif (event.type, event.key) == (SDL_KEYUP, SDLK_UP):
+                upmove = 0
+            elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_DOWN):
+                downmove = 1
+            elif (event.type, event.key) == (SDL_KEYUP, SDLK_DOWN):
+                downmove = 0
 
 def update(frame_time):
     global leftmove
@@ -77,10 +87,14 @@ def update(frame_time):
     road2.update()
     policecar.update()
     item.update()
-    if leftmove == 1:
+    if leftmove == 1 and maincar.x > 50:
         maincar.x -= 1
-    elif rightmove == 1:
+    elif rightmove == 1 and maincar.x < 550:
         maincar.x += 1
+    elif upmove == 1 and maincar.y < 500:
+        maincar.y += 1
+    elif downmove == 1 and maincar.y > 80:
+        maincar.y -= 1
 
 def draw(frame_time):
 
@@ -88,7 +102,9 @@ def draw(frame_time):
     road1.draw()
     road2.draw()
     maincar.draw()
+    maincar.draw_bb()
     policecar.draw()
+    policecar.draw_bb()
     item.draw()
     box.draw()
     update_canvas()
