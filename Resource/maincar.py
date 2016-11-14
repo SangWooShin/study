@@ -6,7 +6,7 @@ class Maincar:
 
     def __init__(self):
         self.x, self.y = 450, 80
-        self.life = 5
+        self.life = 3
         if Maincar.image == None:
             Maincar.image = load_image('MainCar.png')
 

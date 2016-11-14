@@ -8,6 +8,7 @@ from policecar import Policecar
 from road import Road
 from item import Item
 from box import Box
+from heart import Heart
 
 import game_framework
 import title_state
@@ -20,15 +21,18 @@ leftmove = 0
 rightmove = 0
 upmove = 0
 downmove = 0
+score = 0
+boxnum = 2
 
 def enter():
-    global maincar, policecar, road1, road2, font, box, item
+    global maincar, policecar, road1, road2, font, boxes, item, hearts
     maincar = Maincar()
     policecar = Policecar()
     road1 = Road()
     road2 = Road()
-    box = Box()
+    boxes = [Box() for i in range(boxnum)]
     item = Item()
+    hearts = [Heart()for i in range(maincar.life)]
     road2.y = 800
 
     font = load_font('ENCR10B.TTF')
@@ -36,7 +40,7 @@ def enter():
 
 
 def exit():
-    global maincar, policecar, road1, road2, font
+    global maincar, policecar, road1, road2, font, hearts, boxes, item
 
     del(maincar)
     del(policecar)
@@ -44,7 +48,8 @@ def exit():
     del(road2)
     del(font)
     del(item)
-    del(box)
+    del(boxes)
+    del(hearts)
 
 
 def pause():
@@ -81,8 +86,20 @@ def handle_events(frame_time):
             elif (event.type, event.key) == (SDL_KEYUP, SDLK_DOWN):
                 downmove = 0
 
+def collide(a, b):
+    left_a, bottom_a, right_a, top_a = a.get_bb()
+    left_b, bottom_b, right_b, top_b = b.get_bb()
+
+    if left_a > right_b: return False
+    if right_a < left_b: return False
+    if top_a < bottom_b: return False
+    if bottom_a > top_b: return False
+
+    return True
+
+
 def update(frame_time):
-    global leftmove
+    global leftmove, rightmove, upmove, downmove, score
     road1.update()
     road2.update()
     policecar.update()
@@ -96,6 +113,15 @@ def update(frame_time):
     elif downmove == 1 and maincar.y > 80:
         maincar.y -= 1
 
+    if collide(maincar, item):
+        downmove = 0
+        upmove = 0
+        rightmove = 0
+        leftmove = 0
+
+    score += 1
+    print(score)
+
 def draw(frame_time):
 
     clear_canvas()
@@ -106,7 +132,12 @@ def draw(frame_time):
     policecar.draw()
     policecar.draw_bb()
     item.draw()
-    box.draw()
+    item.draw_bb()
+    for Box in boxes:
+        Box.draw()
+        Box.draw_bb()
+    for Heart in hearts:
+        Heart.draw()
     update_canvas()
 
 
