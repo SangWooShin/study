@@ -102,6 +102,8 @@ def update(frame_time):
     global leftmove, rightmove, upmove, downmove, score
     road1.update()
     road2.update()
+    for Box in boxes:
+        Box.update()
     policecar.update()
     item.update()
     if leftmove == 1 and maincar.x > 50:

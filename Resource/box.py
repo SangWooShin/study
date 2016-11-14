@@ -25,8 +25,23 @@ class Box:
         if Box.image == None:
             Box.image = load_image('Box.png')
 
-    def update(self, frame_time):
-        pass
+    def update(self):
+        self.y -= 1
+        if self.y == 80:
+            self.y = 800
+            self.rand = random.randint(1, 6)
+            if self.rand == 1:
+                self.x = 50
+            elif self.rand == 2:
+                self.x = 150
+            elif self.rand == 3:
+                self.x = 250
+            elif self.rand == 4:
+                self.x = 350
+            elif self.rand == 5:
+                self.x = 440
+            elif self.rand == 6:
+                self.x = 540
 
     def draw(self):
         self.image.draw(self.x, self.y)
