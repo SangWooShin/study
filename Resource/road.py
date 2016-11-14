@@ -10,8 +10,7 @@ class Road:
             Road.image = load_image('Road.png')
 
     def update(self):
-        self.y -= 1
-        if self.y == -200:
+        if self.y < -200:
             self.y = 800
 
     def draw(self):

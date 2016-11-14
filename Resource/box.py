@@ -7,41 +7,58 @@ class Box:
     image = None;
 
     def __init__(self):
-        self.rand = random.randint(1,6)
-        if self.rand == 1:
+        self.randx = random.randint(1,6)
+        if self.randx == 1:
             self.x = 50
-        elif self.rand == 2:
+        elif self.randx == 2:
             self.x = 150
-        elif self.rand == 3:
+        elif self.randx == 3:
             self.x = 250
-        elif self.rand == 4:
+        elif self.randx == 4:
             self.x = 350
-        elif self.rand == 5:
+        elif self.randx == 5:
             self.x = 440
-        elif self.rand == 6:
+        elif self.randx == 6:
             self.x = 540
 
-        self.y = 500
+        self.randy = random.randint(1, 4)
+        if self.randy == 1:
+            self.y = 500
+        elif self.randy == 2:
+            self.y = 550
+        elif self.randy == 3:
+            self.y = 600
+        elif self.randy == 4:
+            self.y = 650
+
         if Box.image == None:
             Box.image = load_image('Box.png')
 
     def update(self):
-        self.y -= 1
-        if self.y == 80:
-            self.y = 800
-            self.rand = random.randint(1, 6)
-            if self.rand == 1:
+        if self.y == -30 or self.y == 800:
+            self.randy = random.randint(1, 4)
+            if self.randy == 1:
+                self.y = 600
+            elif self.randy == 2:
+                self.y = 650
+            elif self.randy == 3:
+                self.y = 700
+            elif self.randy == 4:
+                self.y = 750
+            self.randx = random.randint(1, 6)
+            if self.randx == 1:
                 self.x = 50
-            elif self.rand == 2:
+            elif self.randx == 2:
                 self.x = 150
-            elif self.rand == 3:
+            elif self.randx == 3:
                 self.x = 250
-            elif self.rand == 4:
+            elif self.randx == 4:
                 self.x = 350
-            elif self.rand == 5:
+            elif self.randx == 5:
                 self.x = 440
-            elif self.rand == 6:
+            elif self.randx == 6:
                 self.x = 540
+
 
     def draw(self):
         self.image.draw(self.x, self.y)

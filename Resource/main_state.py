@@ -9,6 +9,7 @@ from road import Road
 from item import Item
 from box import Box
 from heart import Heart
+from scorescreen import Scorescreen
 
 import game_framework
 import title_state
@@ -22,34 +23,54 @@ rightmove = 0
 upmove = 0
 downmove = 0
 score = 0
-boxnum = 2
+scoretime = 0
+
+
+
+image = None
+font = None
+
 
 def enter():
-    global maincar, policecar, road1, road2, font, boxes, item, hearts
+    global maincar, policecar, road1, road2, font, boxes, item, hearts, scorescreen, boxnum, itemview, itemcount, boost, boostsave, boostspeed, heart
     maincar = Maincar()
     policecar = Policecar()
     road1 = Road()
     road2 = Road()
-    boxes = [Box() for i in range(boxnum)]
-    item = Item()
-    hearts = [Heart()for i in range(maincar.life)]
     road2.y = 800
+    boxnum = 6
+    itemcount = 1
+    boost = 0
+    boostsave = 0
+    boostspeed = 1
+    boxes = [Box() for i in range(boxnum)]
+    itemview = Item()
+    itemview.x = 650
+    itemview.y = 350
+    item = Item()
+    heart = Heart()
+    hearts = Heart()
+    hearts.x = 650
+    hearts.y = 450
+    font = load_font('ENCR10B.TTF', 30)
+    scorescreen = Scorescreen()
 
-    font = load_font('ENCR10B.TTF')
     game_framework.reset_time()
 
 
 def exit():
-    global maincar, policecar, road1, road2, font, hearts, boxes, item
+    global maincar, policecar, road1, road2, hearts, boxes, item, itemview, scorescreen
 
     del(maincar)
     del(policecar)
     del(road1)
     del(road2)
-    del(font)
     del(item)
     del(boxes)
     del(hearts)
+    del(heart)
+    del(itemview)
+    del(scorescreen)
 
 
 def pause():
@@ -61,7 +82,7 @@ def resume():
 
 
 def handle_events(frame_time):
-    global leftmove, rightmove, upmove, downmove
+    global leftmove, rightmove, upmove, downmove, boost, itemcount, boostsave, score
     events = get_events()
     for event in events:
         if event.type == SDL_QUIT:
@@ -85,6 +106,11 @@ def handle_events(frame_time):
                 downmove = 1
             elif (event.type, event.key) == (SDL_KEYUP, SDLK_DOWN):
                 downmove = 0
+            elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_z):
+                if itemcount > 0 and boost == 0:
+                    itemcount -= 1
+                    boost = 1
+                    boostsave = score
 
 def collide(a, b):
     left_a, bottom_a, right_a, top_a = a.get_bb()
@@ -99,47 +125,94 @@ def collide(a, b):
 
 
 def update(frame_time):
-    global leftmove, rightmove, upmove, downmove, score
+    global leftmove, rightmove, upmove, downmove, score, scoretime, boxnum, boxes, itemcount, boost, boostsave, boostspeed, heart
+    if (score - boostsave) > 10:
+        boost = 0
+        boostspeed = 1
+    if boost == 1:
+        boostspeed = 2
     road1.update()
     road2.update()
     for Box in boxes:
         Box.update()
     policecar.update()
     item.update()
-    if leftmove == 1 and maincar.x > 50:
-        maincar.x -= 1
+    itemview.update()
+    item.y -= 1 * boostspeed
+    road1.y -= 1 * boostspeed
+    road2.y -= 1 * boostspeed
+    heart.y -= 1 * boostspeed
+    for Box in boxes:
+        Box.y -= 1 * boostspeed
+
+    if leftmove == 1 and maincar.x > 50:                    # 차량움직임
+        maincar.x -= 1.5
     elif rightmove == 1 and maincar.x < 550:
-        maincar.x += 1
+        maincar.x += 1.5
     elif upmove == 1 and maincar.y < 500:
-        maincar.y += 1
+        maincar.y += 1.5
     elif downmove == 1 and maincar.y > 80:
-        maincar.y -= 1
+        maincar.y -= 1.5
 
-    if collide(maincar, item):
-        downmove = 0
-        upmove = 0
-        rightmove = 0
-        leftmove = 0
 
-    score += 1
-    print(score)
+    if boost == 1:                           # 충돌체크
+        if collide(maincar, item):
+            itemcount += 1
+            item.y = 10000
+        for Box in boxes:
+            if collide(maincar, Box):
+                Box.y = 800
+        if collide(maincar, policecar):
+            policecar.y = 1000
+        if collide(maincar, heart):
+            maincar.life += 1
+    else:
+        if collide(maincar, item):
+            itemcount += 1
+            item.y = 10000
+        for Box in boxes:
+            if collide(maincar, Box):
+                maincar.life -= 1
+                Box.y = 800
+        if collide(maincar, policecar):
+            maincar.life -= 1
+            policecar.y = 1000
+        if collide(maincar, heart):
+            heart.y = 10000
+            maincar.life += 1
+
+    for Box in boxes:
+        if collide(policecar, Box):
+            Box.y = 900
+    for Box in boxes:
+        if collide(heart, Box):
+            Box.y = 900
+    if collide(policecar, heart):
+        heart.y = 900
+
+    scoretime += 1 * boostspeed # 스코어
+    score = int(scoretime / 400)
+
 
 def draw(frame_time):
 
     clear_canvas()
+    scorescreen.draw()
+
     road1.draw()
     road2.draw()
     maincar.draw()
-    maincar.draw_bb()
     policecar.draw()
-    policecar.draw_bb()
     item.draw()
-    item.draw_bb()
+    itemview.draw()
+    hearts.draw()
+    heart.draw()
     for Box in boxes:
         Box.draw()
-        Box.draw_bb()
-    for Heart in hearts:
-        Heart.draw()
+
+    font.draw(600, 550, 'SCORE : %3d' % score, (255, 255, 255))
+    font.draw(700, 450, 'X %3d' % maincar.life, (255, 255, 255))
+    font.draw(700, 350, 'X %3d' % itemcount, (255, 255, 255))
     update_canvas()
 
 
