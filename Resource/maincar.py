@@ -13,4 +13,4 @@ class Maincar:
         pass
 
     def draw(self):
-        self.image.draw(self.x, self.y)
+        self.image.clip_draw(0, 0, 150, 150, self.x, self.y)

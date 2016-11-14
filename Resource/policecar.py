@@ -1,16 +1,17 @@
 from pico2d import *
 
-class Ball:
+class Policecar:
 
-    image = None;
+    image = None
 
     def __init__(self):
-        self.x, self.y = 170, 200
-        if Ball.image == None:
-            Ball.image = load_image('PoliceCar.png')
+        self.x, self.y = 100, 100
+        self.frame = 0
+        if Policecar.image == None:
+            Policecar.image = load_image('PoliceCar.png')
 
-    def update(self, frame_time):
-        self.y += 5
+    def update(self):
+        self.frame = (self.frame + 1) % 2
 
     def draw(self):
-        self.image.draw(self.x, self.y)
+        self.image.clip_draw(self.frame * 150, 0, 150, 150, self.x, self.y)
