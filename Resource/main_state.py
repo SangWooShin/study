@@ -13,6 +13,7 @@ from scorescreen import Scorescreen
 
 import game_framework
 import title_state
+import ranking_state
 
 
 
@@ -32,7 +33,7 @@ font = None
 
 
 def enter():
-    global maincar, policecar, road1, road2, font, boxes, item, hearts, scorescreen, boxnum, itemview, itemcount, boost, boostsave, boostspeed, heart
+    global maincar, policecar, road1, road2, font, boxes, item, hearts, scorescreen, boxnum, itemview, itemcount, boost, boostsave, boostspeed, heart, leftmove, rightmove, upmove, downmove, addspeed
     maincar = Maincar()
     policecar = Policecar()
     road1 = Road()
@@ -43,6 +44,7 @@ def enter():
     boost = 0
     boostsave = 0
     boostspeed = 1
+    addspeed = 1
     boxes = [Box() for i in range(boxnum)]
     itemview = Item()
     itemview.x = 650
@@ -54,23 +56,12 @@ def enter():
     hearts.y = 450
     font = load_font('ENCR10B.TTF', 30)
     scorescreen = Scorescreen()
+    leftmove = 0
+    rightmove = 0
+    upmove = 0
+    downmove = 0
 
     game_framework.reset_time()
-
-
-def exit():
-    global maincar, policecar, road1, road2, hearts, boxes, item, itemview, scorescreen
-
-    del(maincar)
-    del(policecar)
-    del(road1)
-    del(road2)
-    del(item)
-    del(boxes)
-    del(hearts)
-    del(heart)
-    del(itemview)
-    del(scorescreen)
 
 
 def pause():
@@ -110,7 +101,8 @@ def handle_events(frame_time):
                 if itemcount > 0 and boost == 0:
                     itemcount -= 1
                     boost = 1
-                    boostsave = score
+            if maincar.life < 1:
+                game_framework.change_state(ranking_state)
 
 def collide(a, b):
     left_a, bottom_a, right_a, top_a = a.get_bb()
@@ -125,12 +117,15 @@ def collide(a, b):
 
 
 def update(frame_time):
-    global leftmove, rightmove, upmove, downmove, score, scoretime, boxnum, boxes, itemcount, boost, boostsave, boostspeed, heart
-    if (score - boostsave) > 10:
+    global leftmove, rightmove, upmove, downmove, score, scoretime, boxnum, boxes, itemcount, boost, boostsave, boostspeed, heart, road1, road2, addspeed
+    addspeed = 1 + score/5000
+    if (boostsave) > 2000:
         boost = 0
+        boostsave = 0
         boostspeed = 1
     if boost == 1:
         boostspeed = 2
+        boostsave += 1
     road1.update()
     road2.update()
     for Box in boxes:
@@ -138,12 +133,12 @@ def update(frame_time):
     policecar.update()
     item.update()
     itemview.update()
-    item.y -= 1 * boostspeed
-    road1.y -= 1 * boostspeed
-    road2.y -= 1 * boostspeed
-    heart.y -= 1 * boostspeed
+    item.y -= 1 * boostspeed * addspeed
+    road1.y -= 1 * boostspeed * addspeed
+    road2.y -= 1 * boostspeed * addspeed
+    heart.y -= 1 * boostspeed * addspeed
     for Box in boxes:
-        Box.y -= 1 * boostspeed
+        Box.y -= 1 * boostspeed * addspeed
 
     if leftmove == 1 and maincar.x > 50:                    # 차량움직임
         maincar.x -= 1.5
@@ -155,6 +150,7 @@ def update(frame_time):
         maincar.y -= 1.5
 
 
+
     if boost == 1:                           # 충돌체크
         if collide(maincar, item):
             itemcount += 1
@@ -162,10 +158,13 @@ def update(frame_time):
         for Box in boxes:
             if collide(maincar, Box):
                 Box.y = 800
+                scoretime += 4000
         if collide(maincar, policecar):
             policecar.y = 1000
+            scoretime += 40000
         if collide(maincar, heart):
             maincar.life += 1
+            heart.y = 8000
     else:
         if collide(maincar, item):
             itemcount += 1
@@ -187,11 +186,34 @@ def update(frame_time):
     for Box in boxes:
         if collide(heart, Box):
             Box.y = 900
-    if collide(policecar, heart):
-        heart.y = 900
 
     scoretime += 1 * boostspeed # 스코어
     score = int(scoretime / 400)
+
+def exit():
+    global maincar, policecar, road1, road2, hearts, boxes, item, itemview, scorescreen, heart
+
+    del(maincar)
+    del(policecar)
+    del(road1)
+    del(road2)
+    del(item)
+    del(boxes)
+    del(hearts)
+    del(heart)
+    del(itemview)
+    del(scorescreen)
+
+    f = open('data_file.txt', 'r')
+    score_data = json.load(f)
+    f.close()
+
+    score_data.append({"Score": score})
+    print(score_data)
+
+    f = open('data_file.txt', 'w')
+    json.dump(score_data, f)
+    f.close()
 
 
 def draw(frame_time):
@@ -210,7 +232,7 @@ def draw(frame_time):
     for Box in boxes:
         Box.draw()
 
-    font.draw(600, 550, 'SCORE : %3d' % score, (255, 255, 255))
+    font.draw(600, 550, 'SCORE :%3d' % score, (255, 255, 255))
     font.draw(700, 450, 'X %3d' % maincar.life, (255, 255, 255))
     font.draw(700, 350, 'X %3d' % itemcount, (255, 255, 255))
     update_canvas()

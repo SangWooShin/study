@@ -24,7 +24,7 @@ class Heart:
             Heart.image = load_image('Heart.png')
 
     def update(self):
-        if self.y == -30 or self.y == 10000:
+        if self.y < -30 or self.y == 10000:
             self.randy = random.randint(1, 4)
             if self.randy == 1:
                 self.y = 8000

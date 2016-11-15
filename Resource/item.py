@@ -27,7 +27,7 @@ class Item:
     def update(self):
         self.frame = (self.frame + 1) % 5
         if self.y < -40:
-            self.y = 20000
+            self.y = 10000
 
     def draw(self):
         self.image.clip_draw(self.frame * 100, 0, 100, 100, self.x, self.y)

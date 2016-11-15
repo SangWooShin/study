@@ -35,7 +35,7 @@ class Box:
             Box.image = load_image('Box.png')
 
     def update(self):
-        if self.y == -30 or self.y == 800:
+        if self.y < -30 or self.y == 800:
             self.randy = random.randint(1, 4)
             if self.randy == 1:
                 self.y = 600
