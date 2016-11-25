@@ -2,9 +2,10 @@ import random
 import json
 import os
 
-#frame 이용해서 속도 계산.
-#사운드 리소스 수집
-#사운드 입히기.
+# frame 이용해서 속도 계산.
+# 변수, 함수이름 편집.
+# 사운드 리소스 수집.
+# 사운드 입히기.
 from pico2d import *
 from maincar import Maincar
 from policecar import Policecar
