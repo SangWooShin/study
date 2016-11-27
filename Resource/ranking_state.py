@@ -40,11 +40,6 @@ def handle_events(frame_time):
             if (event.type, event.key) == (SDL_KEYDOWN, SDLK_ESCAPE):
                 game_framework.change_state(title_state)
 
-
-
-def update(frame_time):
-    pass
-
 def draw_ranking():
     f = open('data_file.txt', 'r')
     score_data = json.load(f)
@@ -66,6 +61,11 @@ def draw_ranking():
     for score in score_data:
         font.draw(150, 370 - 30 * y, 'Score :  %3d' % score['Score'], (255, 255, 255))
         y += 1
+
+def update(frame_time):
+    pass
+
+
 
 def draw(frame_time):
     global image
