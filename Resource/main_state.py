@@ -150,11 +150,6 @@ def handle_events(frame_time):
             maincar.y += 1.5
         elif downmove == 1 and maincar.y > 80:
             maincar.y -= 1.5
-
-
-
-
-
     if boost == 1:                                         # 충돌체크
         if collide(maincar, item):
             itemcount += 1
