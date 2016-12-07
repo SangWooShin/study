@@ -120,38 +120,38 @@ def handle_events(frame_time):
             if maincar.life < 1:
                 game_framework.change_state(ranking_state)
 
-    def update(frame_time):
-        global leftmove, rightmove, upmove, downmove, score, scoretime, boxnum, boxes, itemcount, boost, boostsave, boostspeed, heart, road1, road2, addspeed
-        addspeed = 1 + score / 5000
-        if (boostsave) > 2000:
-            boost = 0
-            boostsave = 0
-            boostspeed = 1
-        if boost == 1:
-            boostspeed = 2
-            boostsave += 1
-        road1.update()
-        road2.update()
-        for Box in boxes:
-            Box.update()
-        policecar.update()
-        item.update()
-        itemview.update()
-        item.y -= 1 * boostspeed * addspeed
-        road1.y -= 1 * boostspeed * addspeed
-        road2.y -= 1 * boostspeed * addspeed
-        heart.y -= 1 * boostspeed * addspeed
-        for Box in boxes:
-            Box.y -= 1 * boostspeed * addspeed
+def update(frame_time):
+    global leftmove, rightmove, upmove, downmove, score, scoretime, boxnum, boxes, itemcount, boost, boostsave, boostspeed, heart, road1, road2, addspeed
+    addspeed = 1 + score / 5000
+    if (boostsave) > 2000:
+        boost = 0
+        boostsave = 0
+        boostspeed = 1
+    if boost == 1:
+        boostspeed = 2
+        boostsave += 1
+    road1.update()
+    road2.update()
+    for Box in boxes:
+        Box.update()
+    policecar.update()
+    item.update()
+    itemview.update()
+    item.y -= 1 * boostspeed * addspeed
+    road1.y -= 1 * boostspeed * addspeed
+    road2.y -= 1 * boostspeed * addspeed
+    heart.y -= 1 * boostspeed * addspeed
+    for Box in boxes:
+        Box.y -= 1 * boostspeed * addspeed
 
-        if leftmove == 1 and maincar.x > 50:  # 차량움직임
-            maincar.x -= 1.5
-        elif rightmove == 1 and maincar.x < 550:
-            maincar.x += 1.5
-        elif upmove == 1 and maincar.y < 500:
-            maincar.y += 1.5
-        elif downmove == 1 and maincar.y > 80:
-            maincar.y -= 1.5
+    if leftmove == 1 and maincar.x > 50:  # 차량움직임
+        maincar.x -= 1.5
+    elif rightmove == 1 and maincar.x < 550:
+        maincar.x += 1.5
+    elif upmove == 1 and maincar.y < 500:
+        maincar.y += 1.5
+    elif downmove == 1 and maincar.y > 80:
+        maincar.y -= 1.5
     if boost == 1:                                         # 충돌체크
         if collide(maincar, item):
             itemcount += 1
