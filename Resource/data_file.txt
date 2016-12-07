@@ -1,1 +1,1 @@
-[{"Score": 5}, {"Score": 32}, {"Score": 160}, {"Score": 341}, {"Score": 408}, {"Score": 973}, {"Score": 1061}, {"Score": 80}, {"Score": 1211}, {"Score": 0}, {"Score": 109}, {"Score": 310}, {"Score": 24}, {"Score": 1191}, {"Score": 5}]
+[{"Score": 5}, {"Score": 32}, {"Score": 160}, {"Score": 341}, {"Score": 408}, {"Score": 973}, {"Score": 1061}, {"Score": 80}, {"Score": 1211}, {"Score": 0}, {"Score": 109}, {"Score": 310}, {"Score": 24}, {"Score": 1191}, {"Score": 5}, {"Score": 3}, {"Score": 5}, {"Score": 1}]
