@@ -2,6 +2,8 @@ import random
 import json
 import os
 
+# 스크롤
+# 패키징
 # 속도 기준 정하기
 # 거리 기준 정하기
 # frame 이용해서 속도 계산.
