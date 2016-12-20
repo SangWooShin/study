@@ -97,21 +97,21 @@ def handle_events(frame_time):
             if (event.type, event.key) == (SDL_KEYDOWN, SDLK_ESCAPE):
                 game_framework.change_state(title_state)
             if (event.type, event.key) == (SDL_KEYDOWN, SDLK_LEFT):
-                leftmove = 1
+                maincar.leftmove = 1
             elif (event.type, event.key) == (SDL_KEYUP, SDLK_LEFT):
-                leftmove = 0
+                maincar.leftmove = 0
             elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_RIGHT):
-                rightmove = 1
+                maincar.rightmove = 1
             elif (event.type, event.key) == (SDL_KEYUP, SDLK_RIGHT):
-                rightmove = 0
+                maincar.rightmove = 0
             elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_UP):
-                upmove = 1
+                maincar.upmove = 1
             elif (event.type, event.key) == (SDL_KEYUP, SDLK_UP):
-                upmove = 0
+                maincar.upmove = 0
             elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_DOWN):
-                downmove = 1
+                maincar.downmove = 1
             elif (event.type, event.key) == (SDL_KEYUP, SDLK_DOWN):
-                downmove = 0
+                maincar.downmove = 0
             elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_z):
                 if itemcount > 0 and boost == 0:
                     itemcount -= 1
@@ -134,6 +134,7 @@ def update(frame_time):
     for Box in boxes:
         Box.update()
     policecar.update()
+    maincar.update()
     item.update()
     itemview.update()
     item.y -= 1 * boostspeed * addspeed
@@ -142,15 +143,6 @@ def update(frame_time):
     heart.y -= 1 * boostspeed * addspeed
     for Box in boxes:
         Box.y -= 1 * boostspeed * addspeed
-
-    if leftmove == 1 and maincar.x > 50:  # 차량움직임
-        maincar.x -= 1.5
-    elif rightmove == 1 and maincar.x < 550:
-        maincar.x += 1.5
-    elif upmove == 1 and maincar.y < 500:
-        maincar.y += 1.5
-    elif downmove == 1 and maincar.y > 80:
-        maincar.y -= 1.5
     if boost == 1:                                         # 충돌체크
         if collide(maincar, item):
             itemcount += 1
@@ -189,6 +181,8 @@ def update(frame_time):
 
     scoretime += 1 * boostspeed # 스코어
     score = int(scoretime / 400)
+
+
 
 def exit():
     global maincar, policecar, road1, road2, hearts, boxes, item, itemview, scorescreen, heart
@@ -229,6 +223,7 @@ def draw(frame_time):
     itemview.draw()
     hearts.draw()
     heart.draw()
+
     for Box in boxes:
         Box.draw()
 
