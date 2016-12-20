@@ -1,11 +1,8 @@
 from pico2d import *
-import game_framework
 class Maincar:
-    TARGET_FPS = 60.0
-    TARGET_FRAME_TIME = 1.0 / TARGET_FPS
 
     PIXEL_PER_METER = (10.0 / 0.3)          # 10 pixel 30cm
-    RUN_SPEED_KMPH = 100.0                   # Km / Hour
+    RUN_SPEED_KMPH = 50.0                   # Km / Hour
     RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
     RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
     RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
@@ -20,24 +17,22 @@ class Maincar:
         self.rightmove = 0
         self.upmove = 0
         self.downmove = 0
+        self.dir = 0
+        self.ydir = 0
         if Maincar.image == None:
             Maincar.image = load_image('MainCar.png')
+        self.crushsound = load_wav('Ding.wav')
+        self.crushsound.set_volume(50)
 
+    def crush_sound(self):
+        self.crushsound.play()
 
     def update(self, frame_time):
-
-
-        if self.leftmove == 1 and self.x > 50:  # 차량움직임
-            self.dir = -1
-        elif self.rightmove == 1 and self.x < 550:
-            self.x += 1.5
-        elif self.upmove == 1 and self.y < 500:
-            self.y += 1.5
-        elif self.downmove == 1 and self.y > 80:
-            self.y -= 1.5
-        distance = Maincar.RUN_SPEED_PPS * game_framework.frame_time
-        self.total_frames += 1.0
-        self.frame = (self.frame + 1) % 8
+        if  self.x < 50 and self.dir == -1:  # 차량움직임
+            self.dir = 0
+        elif  self.x > 550 and self.dir == 1:  # 차량움직임
+            self.dir = 0
+        distance = Maincar.RUN_SPEED_PPS * frame_time
         self.x += (self.dir * distance)
 
     def draw(self):

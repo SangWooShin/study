@@ -3,6 +3,12 @@ from pico2d import *
 
 class Policecar:
 
+    PIXEL_PER_METER = (10.0 / 0.3)  # 10 pixel 30cm
+    RUN_SPEED_KMPH = 5.0  # Km / Hour
+    RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
+    RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
+    RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
+
     image = None
     def __init__(self):
         global direction, movex, init, score, scoretime
@@ -30,7 +36,7 @@ class Policecar:
         if Policecar.image == None:
             Policecar.image = load_image('PoliceCar.png')
 
-    def update(self):
+    def update(self, frame_time):
         global  direction, movex, init, score, scoretime
         if direction == 0:
             movex += 0.1
@@ -47,7 +53,8 @@ class Policecar:
             init = 1
 
         if init == 1:
-            self.y -= 0.05
+            distance = Policecar.RUN_SPEED_PPS * frame_time
+            self.y -= distance
 
         scoretime += 1
         score = int(scoretime / 400)

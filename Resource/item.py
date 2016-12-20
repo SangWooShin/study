@@ -3,6 +3,12 @@ from pico2d import *
 
 class Item:
 
+    PIXEL_PER_METER = (10.0 / 0.3)  # 10 pixel 30cm
+    RUN_SPEED_KMPH = 20.0  # Km / Hour
+    RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
+    RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
+    RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
+
     image = None;
 
     def __init__(self):
@@ -24,10 +30,12 @@ class Item:
         if Item.image == None:
             Item.image = load_image('Item.png')
 
-    def update(self):
+    def update(self, frame_time):
         self.frame = (self.frame + 1) % 5
         if self.y < -40:
             self.y = 10000
+        distance = Item.RUN_SPEED_PPS * frame_time
+        self.y -= distance
 
     def draw(self):
         self.image.clip_draw(self.frame * 100, 0, 100, 100, self.x, self.y)

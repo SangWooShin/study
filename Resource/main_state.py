@@ -36,14 +36,24 @@ scoretime = 0
 image = None
 font = None
 
+current_time = 0
+
+def get_frame_time():
+
+    global current_time
+
+    frame_time = get_time() - current_time
+    current_time += frame_time
+    return frame_time
 
 def enter():
     global maincar, policecar, road1, road2, font, boxes, item, hearts, scorescreen, boxnum, itemview, itemcount, boost, boostsave, boostspeed, heart, leftmove, rightmove, upmove, downmove, addspeed
     maincar = Maincar()
     policecar = Policecar()
     road1 = Road()
+    road1.y = 0
     road2 = Road()
-    road2.y = 800
+    road2.y = 400
     boxnum = 6
     itemcount = 1
     boost = 0
@@ -97,13 +107,13 @@ def handle_events(frame_time):
             if (event.type, event.key) == (SDL_KEYDOWN, SDLK_ESCAPE):
                 game_framework.change_state(title_state)
             if (event.type, event.key) == (SDL_KEYDOWN, SDLK_LEFT):
-                maincar.leftmove = 1
+                maincar.dir = -1
             elif (event.type, event.key) == (SDL_KEYUP, SDLK_LEFT):
-                maincar.leftmove = 0
+                maincar.dir = 0
             elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_RIGHT):
-                maincar.rightmove = 1
+                maincar.dir = 1
             elif (event.type, event.key) == (SDL_KEYUP, SDLK_RIGHT):
-                maincar.rightmove = 0
+                maincar.dir = 0
             elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_UP):
                 maincar.upmove = 1
             elif (event.type, event.key) == (SDL_KEYUP, SDLK_UP):
@@ -121,6 +131,8 @@ def handle_events(frame_time):
 
 def update(frame_time):
     global leftmove, rightmove, upmove, downmove, score, scoretime, boxnum, boxes, itemcount, boost, boostsave, boostspeed, heart, road1, road2, addspeed
+
+    frame_time = get_frame_time()
     addspeed = 1 + score / 5000
     if (boostsave) > 2000:
         boost = 0
@@ -129,20 +141,15 @@ def update(frame_time):
     if boost == 1:
         boostspeed = 2
         boostsave += 1
-    road1.update()
-    road2.update()
+    road1.update(frame_time, boostspeed)
+    road2.update(frame_time, boostspeed)
+
     for Box in boxes:
-        Box.update()
-    policecar.update()
-    maincar.update()
-    item.update()
-    itemview.update()
-    item.y -= 1 * boostspeed * addspeed
-    road1.y -= 1 * boostspeed * addspeed
-    road2.y -= 1 * boostspeed * addspeed
+        Box.update(frame_time, boostspeed)
+    policecar.update(frame_time)
+    maincar.update(frame_time)
+    item.update(frame_time)
     heart.y -= 1 * boostspeed * addspeed
-    for Box in boxes:
-        Box.y -= 1 * boostspeed * addspeed
     if boost == 1:                                         # 충돌체크
         if collide(maincar, item):
             itemcount += 1
@@ -151,6 +158,7 @@ def update(frame_time):
             if collide(maincar, Box):
                 Box.y = 800
                 scoretime += 4000
+
         if collide(maincar, policecar):
             policecar.y = 1000
             scoretime += 40000
@@ -163,6 +171,7 @@ def update(frame_time):
             item.y = 10000
         for Box in boxes:
             if collide(maincar, Box):
+                maincar.crush_sound()
                 maincar.life -= 1
                 Box.y = 800
         if collide(maincar, policecar):
@@ -172,9 +181,6 @@ def update(frame_time):
             heart.y = 10000
             maincar.life += 1
 
-    for Box in boxes:
-        if collide(policecar, Box):
-            Box.y = 900
     for Box in boxes:
         if collide(heart, Box):
             Box.y = 900
@@ -203,7 +209,6 @@ def exit():
     f.close()
 
     score_data.append({"Score": score})
-    print(score_data)
 
     f = open('data_file.txt', 'w')
     json.dump(score_data, f)
@@ -214,18 +219,16 @@ def draw(frame_time):
 
     clear_canvas()
     scorescreen.draw()
-
     road1.draw()
     road2.draw()
-    maincar.draw()
-    policecar.draw()
     item.draw()
     itemview.draw()
     hearts.draw()
     heart.draw()
-
     for Box in boxes:
         Box.draw()
+    policecar.draw()
+    maincar.draw()
 
     font.draw(600, 550, 'SCORE :%3d' % score, (255, 255, 255))
     font.draw(700, 450, 'X %3d' % maincar.life, (255, 255, 255))
