@@ -21,11 +21,18 @@ class Maincar:
         self.ydir = 0
         if Maincar.image == None:
             Maincar.image = load_image('MainCar.png')
-        self.crushsound = load_wav('Ding.wav')
-        self.crushsound.set_volume(50)
+        self.crushsound = load_wav('CarHit.wav')
+        self.crushsound.set_volume(40)
+        self.eatitemsound = load_wav('EatItem.wav')
+        self.eatitemsound.set_volume(40)
 
     def crush_sound(self):
         self.crushsound.play()
+
+    def eatitem_sound(self):
+        self.eatitemsound.play()
+
+
 
     def update(self, frame_time):
         if  self.x < 50 and self.dir == -1:  # 차량움직임

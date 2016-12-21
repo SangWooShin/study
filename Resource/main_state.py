@@ -158,15 +158,18 @@ def update(frame_time):
             if collide(maincar, Box):
                 Box.y = 800
                 scoretime += 4000
-
+                maincar.eatitem_sound()
         if collide(maincar, policecar):
             policecar.y = 1000
             scoretime += 40000
+            maincar.eatitem_sound()
         if collide(maincar, heart):
             maincar.life += 1
             heart.y = 8000
+            maincar.eatitem_sound()
     else:
         if collide(maincar, item):
+            maincar.eatitem_sound()
             itemcount += 1
             item.y = 10000
         for Box in boxes:
@@ -175,11 +178,13 @@ def update(frame_time):
                 maincar.life -= 1
                 Box.y = 800
         if collide(maincar, policecar):
+            maincar.crush_sound()
             maincar.life -= 1
             policecar.y = 1000
         if collide(maincar, heart):
             heart.y = 10000
             maincar.life += 1
+            maincar.eatitem_sound()
 
     for Box in boxes:
         if collide(heart, Box):
