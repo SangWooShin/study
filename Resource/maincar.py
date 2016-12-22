@@ -25,12 +25,19 @@ class Maincar:
         self.crushsound.set_volume(40)
         self.eatitemsound = load_wav('EatItem.wav')
         self.eatitemsound.set_volume(40)
+        self.mainsound = load_music('MainSound.mp3')
+        self.mainsound.set_volume(40)
+        self.mainsound.repeat_play()
 
     def crush_sound(self):
         self.crushsound.play()
 
     def eatitem_sound(self):
         self.eatitemsound.play()
+
+    def main_sound(self):
+        self.mainsound.repeat_play()
+
 
 
 

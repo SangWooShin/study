@@ -75,6 +75,7 @@ def enter():
     rightmove = 0
     upmove = 0
     downmove = 0
+    maincar.main_sound()
 
     game_framework.reset_time()
 
